@@ -79,9 +79,9 @@ spec.pdf: $(DSRC)/spec.tex $(DSRC)/gqtekspec.cls $(DSRC)/GT.eps
 	@rm -f $(DSRC)/spec.out spec.ps
 ## }}}
 
-.PHONY: clean
+.PHONY: distclean
 ## {{{
-clean:
+distclean:
 	rm -f $(DSRC)/spec.dvi $(DSRC)/spec.log
 	rm -f $(DSRC)/spec.aux $(DSRC)/spec.toc
 	rm -f $(DSRC)/spec.lot $(DSRC)/spec.lof
