@@ -133,7 +133,7 @@ void	UARTSIM::kill(void) {
 // {{{
 void	UARTSIM::setup(unsigned isetup) {
 	if (isetup != m_setup) {
-		m_setup = isetup;
+	        m_setup = isetup;
 		m_baud_counts = (isetup & 0x0ffffff);
 		m_nbits   = 8-((isetup >> 28)&0x03);
 		m_nstop   =((isetup >> 27)&1)+1;
@@ -195,6 +195,10 @@ int	UARTSIM::rawtick(const int i_tx, const bool network) {
 			if (m_conwr >= 0) {
 				char	buf[1];
 				buf[0] = (m_rx_data >> (32-m_nbits-m_nstop-m_nparity))&0x0ff;
+				//We add the received data to the m_rx_string variable. We no longer output it here.
+				//Hence the #if 0 below. Outputting received data is left up to the uartsim user code.
+				m_rx_string.push_back(buf[0]);
+#if 0				
 				if ((network)&&(1 != send(m_conwr, buf, 1, 0))) {
 					close(m_conwr);
 					m_conrd = m_conwr = -1;
@@ -204,6 +208,7 @@ int	UARTSIM::rawtick(const int i_tx, const bool network) {
 					perror("UARTSIM::write() ");
 					m_conrd = m_conwr = -1;
 				}
+#endif				
 			}
 		} else {
 			m_rx_busy = (m_rx_busy << 1)|1;

@@ -45,6 +45,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <string>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <poll.h>
@@ -79,6 +80,9 @@ class	UARTSIM	{
 	unsigned	m_rx_data, m_tx_data;
 	// }}}
 
+        // UART received data storeed as a string.
+        std::string m_rx_string;
+  
 	// Private methods
 	// {{{
 	// setup_listener is an attempt to encapsulate all of the network
@@ -152,6 +156,16 @@ public:
 		setup(isetup); return tick(i_tx); }
 	// }}}
 	// }}}
+
+        // Retrieve received UART Rx data as a text string.
+        const std::string& get_rx_string() const {
+                return m_rx_string;
+        }
+
+        // Clear the received UART Rx data string. 
+        void clear_rx_string() {
+                m_rx_string.clear();
+        }
 };
 
 #endif
