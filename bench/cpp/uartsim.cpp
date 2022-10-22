@@ -168,6 +168,42 @@ void	UARTSIM::check_for_new_connections(void) {
 }
 // }}}
 
+// Enter a character into the Tx path.
+// Returns 0 if successful, -1 if state was not idle (i.e. not read to receive a char).
+int UARTSIM::enterCharInTxPath(char c) {
+  if (m_tx_state == TXIDLE) {
+    m_tx_string.push_back(c);
+    m_tx_data = (-1<<(m_nbits+m_nparity+1))
+      // << nstart_bits
+      |((c<<1)&0x01fe);
+    if (m_nparity) {
+      int	p;
+
+      // If m_nparity is set, we need to then
+      // create the parity bit.
+      if (m_fixdp)
+	p = m_evenp;
+      else {
+	p = (m_tx_data >> 1)&0x0ff;
+	p = p ^ (p>>4);
+	p = p ^ (p>>2);
+	p = p ^ (p>>1);
+	p &= 1;
+	p ^= m_evenp;
+      }
+      m_tx_data |= (p<<(m_nbits+m_nparity));
+    }
+    m_tx_busy = (1<<(m_nbits+m_nparity+m_nstop+1))-1;
+    m_tx_state = TXDATA;
+    m_tx_baudcounter = m_baud_counts-1;
+
+    return 0;
+  }
+  else {
+    return -1;
+  }
+}
+
 // UARTSIM::rawtick(i_tx, network)
 // {{{
 int	UARTSIM::rawtick(const int i_tx, const bool network) {
@@ -196,9 +232,8 @@ int	UARTSIM::rawtick(const int i_tx, const bool network) {
 				char	buf[1];
 				buf[0] = (m_rx_data >> (32-m_nbits-m_nstop-m_nparity))&0x0ff;
 				//We add the received data to the m_rx_string variable. We no longer output it here.
-				//Hence the #if 0 below. Outputting received data is left up to the uartsim user code.
+				//Outputting received data is left up to the uartsim user code.
 				m_rx_string.push_back(buf[0]);
-#if 0				
 				if ((network)&&(1 != send(m_conwr, buf, 1, 0))) {
 					close(m_conwr);
 					m_conrd = m_conwr = -1;
@@ -208,7 +243,6 @@ int	UARTSIM::rawtick(const int i_tx, const bool network) {
 					perror("UARTSIM::write() ");
 					m_conrd = m_conwr = -1;
 				}
-#endif				
 			}
 		} else {
 			m_rx_busy = (m_rx_busy << 1)|1;
@@ -234,7 +268,6 @@ int	UARTSIM::rawtick(const int i_tx, const bool network) {
 		pb.events = POLLIN;
 		if (poll(&pb, 1, 0) < 0)
 			perror("Polling error:");
-
 		if (pb.revents & POLLIN) {
 			char	buf[1];
 
@@ -246,6 +279,8 @@ int	UARTSIM::rawtick(const int i_tx, const bool network) {
 				m_tx_data = (-1<<(m_nbits+m_nparity+1))
 					// << nstart_bits
 					|((buf[0]<<1)&0x01fe);
+				m_tx_string.push_back(buf[0]);
+
 				if (m_nparity) {
 					int	p;
 

@@ -80,8 +80,10 @@ class	UARTSIM	{
 	unsigned	m_rx_data, m_tx_data;
 	// }}}
 
-        // UART received data storeed as a string.
+        // UART received data stored as a string.
         std::string m_rx_string;
+        // UART transmit data stored as a string.
+        std::string m_tx_string;
   
 	// Private methods
 	// {{{
@@ -133,6 +135,10 @@ public:
 	void	setup(unsigned isetup);
 	// }}}
 
+	// Enter a character into the Tx path.
+	// Returns 0 if successful, -1 if state was not idle (i.e. not read to receive a char).
+	int enterCharInTxPath(char c);
+
 	// operator()(i_tx)
 	// {{{
 	// The operator() function is called on every tick.  The input is the
@@ -162,6 +168,11 @@ public:
                 return m_rx_string;
         }
 
+        // Retrieve UART Tx data as a text string.
+        const std::string& get_tx_string() const {
+                return m_tx_string;
+        }
+  
         // Clear the received UART Rx data string. 
         void clear_rx_string() {
                 m_rx_string.clear();
