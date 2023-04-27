@@ -234,6 +234,7 @@ int	UARTSIM::rawtick(const int i_tx, const bool network) {
 				//We add the received data to the m_rx_string variable. We no longer output it here.
 				//Outputting received data is left up to the uartsim user code.
 				m_rx_string.push_back(buf[0]);
+#if 0				
 				if ((network)&&(1 != send(m_conwr, buf, 1, 0))) {
 					close(m_conwr);
 					m_conrd = m_conwr = -1;
@@ -243,6 +244,7 @@ int	UARTSIM::rawtick(const int i_tx, const bool network) {
 					perror("UARTSIM::write() ");
 					m_conrd = m_conwr = -1;
 				}
+#endif				
 			}
 		} else {
 			m_rx_busy = (m_rx_busy << 1)|1;
