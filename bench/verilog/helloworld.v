@@ -1,18 +1,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Filename: 	helloworld.v
+// Filename:   helloworld.v
 // {{{
-// Project:	wbuart32, a full featured UART with simulator
+// Project:  wbuart32, a full featured UART with simulator
 //
-// Purpose:	To create a *very* simple UART test program, which can be used
-//		as the top level design file of any FPGA program.
+// Purpose:  To create a *very* simple UART test program, which can be used
+//    as the top level design file of any FPGA program.
 //
-//	With some modifications (discussed below), this RTL should be able to
-//	run as a top-level testing file, requiring only the UART and clock pin
-//	to work.
+//  With some modifications (discussed below), this RTL should be able to
+//  run as a top-level testing file, requiring only the UART and clock pin
+//  to work.
 //
-// Creator:	Dan Gisselquist, Ph.D.
-//		Gisselquist Technology, LLC
+// Creator:  Dan Gisselquist, Ph.D.
+//    Gisselquist Technology, LLC
 //
 ////////////////////////////////////////////////////////////////////////////////
 // }}}
@@ -33,8 +33,8 @@
 // target there if the PDF file isn't present.)  If not, see
 // <http://www.gnu.org/licenses/> for a copy.
 //
-// License:	GPL, v3, as defined and found on www.gnu.org,
-//		http://www.gnu.org/licenses/gpl.html
+// License:  GPL, v3, as defined and found on www.gnu.org,
+//    http://www.gnu.org/licenses/gpl.html
 //
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@
 // (* Another comment still ...) Verilator and we need to get i_setup from the
 // external environment.  If not, it must be set internally.
 // }}}
-`ifndef	VERILATOR
+`ifndef VERILATOR
 `define OPT_STANDALONE
 `endif
 // {{{
@@ -59,120 +59,126 @@
 // detection, parity error detection, etc.  If we set USE_LITE_UART here, those
 // simplified UART modules will be used.
 // }}}
-// `define	USE_LITE_UART
+// `define  USE_LITE_UART
 //
 `default_nettype none
 //
-module	helloworld #(
-		// {{{
-		// Here we set i_setup to something appropriate to create a
-		// 115200 Baud UART system from a 100MHz clock.  This also sets
-		// us to an 8-bit data word, 1-stop bit, and no parity.  This
-		// will be overwritten by i_setup, but at least it gives us
-		// something to start with/from.
-		// Verilator lint_off UNUSED
-		parameter	INITIAL_UART_SETUP = 31'd868
-		// Verilator lint_on  UNUSED
-		// }}}
-	) (
-		// {{{
-		input	wire		i_clk,
-`ifndef	OPT_STANDALONE
-		input	wire	[30:0]	i_setup,
+module helloworld #(
+    // {{{
+    // Here we set i_setup to something appropriate to create a
+    // 115200 Baud UART system from a 100MHz clock.  This also sets
+    // us to an 8-bit data word, 1-stop bit, and no parity.  This
+    // will be overwritten by i_setup, but at least it gives us
+    // something to start with/from.
+    // Verilator lint_off UNUSED
+    parameter INITIAL_UART_SETUP = 31'd868
+    // Verilator lint_on  UNUSED
+    // }}}
+) (
+    // {{{
+    input  wire    i_clk,
+`ifndef  OPT_STANDALONE
+    input  wire  [30:0]  i_setup,
 `endif
-		output	wire		o_uart_tx
-		// }}}
-	);
+    output  wire    o_uart_tx
+    // }}}
+);
 
-	// Signal declarations
-	// {{{
-	reg	[7:0]	message	[0:15];
-	reg		pwr_reset;
+  // Signal declarations
+  // {{{
+  reg  [7:0]  message  [0:15];
+  reg    pwr_reset;
 
-	reg	[27:0]	counter;
-	wire		tx_break, tx_busy;
-	reg		tx_stb;
-	reg	[3:0]	tx_index;
-	reg	[7:0]	tx_data;
+  reg  [27:0]  counter;
+  wire tx_break, tx_busy;
+  reg    tx_stb;
+  reg  [3:0]  tx_index;
+  reg  [7:0]  tx_data;
 
-	wire		cts_n;
-	// }}}
+  wire    cts_n;
+  // }}}
 
-	// i_setup
-	// {{{
-`ifdef	OPT_STANDALONE
-	// The i_setup wires are input when run under Verilator, but need to
-	// be set internally if this is going to run as a standalone top level
-	// test configuration.
-	assign	i_setup = INITIAL_UART_SETUP;
+  // i_setup
+  // {{{
+`ifdef OPT_STANDALONE
+  // The i_setup wires are input when run under Verilator, but need to
+  // be set internally if this is going to run as a standalone top level
+  // test configuration.
+  assign i_setup = INITIAL_UART_SETUP;
 `endif
-	// }}}
+  // }}}
 
-	// pwr_reset
-	// {{{
-	initial	pwr_reset = 1'b1;
-	always @(posedge i_clk)
-		pwr_reset <= 1'b0;
-	// }}}
+  // pwr_reset
+  // {{{
+  initial pwr_reset = 1'b1;
+  always @(posedge i_clk) pwr_reset <= 1'b0;
+  // }}}
 
-	// Initialize the message
-	// {{{
-	initial begin
-		message[ 0] = "H";
-		message[ 1] = "e";
-		message[ 2] = "l";
-		message[ 3] = "l";
-		message[ 4] = "o";
-		message[ 5] = ",";
-		message[ 6] = " ";
-		message[ 7] = "W";
-		message[ 8] = "o";
-		message[ 9] = "r";
-		message[10] = "l";
-		message[11] = "d";
-		message[12] = "!";
-		message[13] = " ";
-		message[14] = "\r";
-		message[15] = "\n";
-	end
-	// }}}
+  // Initialize the message
+  // {{{
+  initial begin
+    message[0]  = "H";
+    message[1]  = "e";
+    message[2]  = "l";
+    message[3]  = "l";
+    message[4]  = "o";
+    message[5]  = ",";
+    message[6]  = " ";
+    message[7]  = "W";
+    message[8]  = "o";
+    message[9]  = "r";
+    message[10] = "l";
+    message[11] = "d";
+    message[12] = "!";
+    message[13] = " ";
+    message[14] = "\r";
+    message[15] = "\n";
+  end
+  // }}}
 
-	// Send a Hello World message to the transmitter
-	// {{{
-	initial	counter = 28'hffffff0;
-	always @(posedge i_clk)
-		counter <= counter + 1'b1;
+  // Send a Hello World message to the transmitter
+  // {{{
+  initial counter = 28'hffffff0;
+  always @(posedge i_clk) counter <= counter + 1'b1;
 
-	assign	tx_break = 1'b0;
+  assign tx_break = 1'b0;
 
-	initial	tx_index = 4'h0;
-	always @(posedge i_clk)
-	if ((tx_stb)&&(!tx_busy))
-		tx_index <= tx_index + 1'b1;
+  initial tx_index = 4'h0;
+  always @(posedge i_clk) if ((tx_stb) && (!tx_busy)) tx_index <= tx_index + 1'b1;
 
-	always @(posedge i_clk)
-		tx_data <= message[tx_index];
+  always @(posedge i_clk) tx_data <= message[tx_index];
 
-	initial	tx_stb = 1'b0;
-	always @(posedge i_clk)
-	if (&counter)
-		tx_stb <= 1'b1;
-	else if ((tx_stb)&&(!tx_busy)&&(tx_index==4'hf))
-		tx_stb <= 1'b0;
-	// }}}
+  initial tx_stb = 1'b0;
+  always @(posedge i_clk)
+    if (&counter) tx_stb <= 1'b1;
+    else if ((tx_stb) && (!tx_busy) && (tx_index == 4'hf)) tx_stb <= 1'b0;
+  // }}}
 
-	// The UART transmitter
-	// {{{
-	// Bypass any hardware flow control
-	assign	cts_n = 1'b0;
+  // The UART transmitter
+  // {{{
+  // Bypass any hardware flow control
+  assign cts_n = 1'b0;
 
-`ifdef	USE_LITE_UART
-	txuartlite
-		#(24'd868)
-		transmitter(i_clk, tx_stb, tx_data, o_uart_tx, tx_busy);
+`ifdef USE_LITE_UART
+  txuartlite #(24'd868) transmitter (
+      i_clk,
+      tx_stb,
+      tx_data,
+      o_uart_tx,
+      tx_busy
+  );
 `else
-	txuart	transmitter(i_clk, pwr_reset, i_setup, tx_break,
-			tx_stb, tx_data, cts_n, o_uart_tx, tx_busy);
+  txuart transmitter (
+      i_clk,
+      pwr_reset,
+      i_setup,
+      tx_break,
+      tx_stb,
+      tx_data,
+      cts_n,
+      o_uart_tx,
+      tx_busy
+  );
 `endif
-	// }}}
+  // }}}
 endmodule
