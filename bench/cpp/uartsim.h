@@ -84,7 +84,7 @@ class	UARTSIM	{
         std::string m_rx_string;
         // UART transmit data stored as a string.
         std::string m_tx_string;
-  
+
 	// Private methods
 	// {{{
 	// setup_listener is an attempt to encapsulate all of the network
@@ -102,7 +102,7 @@ class	UARTSIM	{
 
 	// We'll use the file descriptor for the listener socket to determine
 	// whether we are connected to the network or not.  If not connected
-	// to the network, then we assume m_conrd and m_conwr refer to 
+	// to the network, then we assume m_conrd and m_conwr refer to
 	// your more traditional file descriptors, and use them as such.
 	int	tick(const int i_tx) {
 		return rawtick(i_tx, (m_skt >= 0));
@@ -131,12 +131,12 @@ public:
 	// {{{
 	// setup() busts out the bits from isetup to the various internal
 	// parameters.  It is ideally only called between bits at appropriate
-	// transition intervals. 
+	// transition intervals.
 	void	setup(unsigned isetup);
 	// }}}
 
 	// Enter a character into the Tx path.
-	// Returns 0 if successful, -1 if state was not idle (i.e. not read to receive a char).
+	// Returns 0 if successful, -1 if state was not idle (i.e. not ready to receive a char).
 	int enterCharInTxPath(char c);
 
 	// operator()(i_tx)
@@ -146,7 +146,7 @@ public:
 	// be connected to the the rxuart receive wire into the device.  This
 	// makes hookup and operation very simple.
 	//
-	// This is the most appropriate simulation entry function if the 
+	// This is the most appropriate simulation entry function if the
 	// setup register will never change.
 	//
 	int	operator()(int i_tx) {
@@ -172,8 +172,8 @@ public:
         const std::string& get_tx_string() const {
                 return m_tx_string;
         }
-  
-        // Clear the received UART Rx data string. 
+
+        // Clear the received UART Rx data string.
         void clear_rx_string() {
                 m_rx_string.clear();
         }

@@ -46,7 +46,7 @@
 \title{Specification}
 \author{Dan Gisselquist, Ph.D.}
 \email{dgisselq (at) ieee.org}
-\revision{Rev.~1.0}
+\revision{Rev.~1.02}
 \begin{document}
 \pagestyle{gqtekspecplain}
 \titlepage
@@ -67,6 +67,7 @@ You should have received a copy of the GNU General Public License along
 with this program.  If not, see \texttt{http://www.gnu.org/licenses/} for a copy.
 \end{license}
 \begin{revisionhistory}
+1.02 & 8/07/2024 & epsilon537 & Added BoxLambda amendment.\\\hline
 1.01 & 6/02/2017 & D. Gisselquist & Clarified register descriptions\\\hline
 1.0 & 2/20/2017 & D. Gisselquist & Added Hardware Flow Control\\\hline
 0.2 & 1/03/2017 & D. Gisselquist & Added test-bench information\\\hline
@@ -662,6 +663,34 @@ detailing the I/O ports of the UART transmitter, and Tbl.~\ref{tbl:wbports}
 \end{tabular}\caption{WBUART port list}\label{tbl:wbports}
 \end{center}\end{table}
 detailing the non--wishbone I/O ports of the wishbone controller.
+
+\chapter{BoxLambda Amendment}
+
+The BoxLambda variant of this UART Controller adds the following registers
+to the core:
+
+\begin{table}[htbp]
+\begin{center}\begin{reglist}
+ISR     &{\tt 0x04} &  4 & R/W & Interrupt Status Register\\\hline
+IEN     &{\tt 0x05} &  4 & R/W & Interrupt Enable Register\\\hline
+\end{reglist}
+\caption{UART Registers BoxLambda Amendment}\label{tbl:ioregs}
+\end{center}\end{table}
+
+The following bit positions are defined in the ISR and IEN registers:
+
+\begin{itemize}
+  \item Bit 0: UART\_IRQ\_RX\_DATA\_AVL: This bit gets set when the Rx FIFO goes from an empty to a non-empty state.
+  \item Bit 1: UART\_IRQ\_RX\_FIFO\_HALF\_FULL: This bit gets set when the Rx FIFO is filling level reaches the half-full threshold.
+  \item Bit 2: UART\_IRQ\_TX\_FIFO\_EMPTY: This bit gets set when the Tx FIFO goes from a non-empty to an empty state.
+  \item Bit 3: UART\_IRQ\_TX\_FIFO\_HALF\_EMPTY: This bit gets set when the Tx FIFO filling level reaches the half-empty threshold.
+\end{itemize}
+
+The UART Controller core raises its {\tt o\_uart\_int} interrupt line when the ISR and IEN registers both have at least one bit set in the same bit position.
+The host CPU acknowledges/clears interrupts by writing an 1 to corresponding bit position in the ISR register.\newline
+
+The original interrupts lines {\tt o\_uart\_rx\_int}, {\tt o\_uart\_tx\_int}, {\tt o\_uart\_rx\_fifo\_int}, and\\
+{\tt o\_uart\_tx\_fifo\_int} have been removed.
 
 % Appendices
 % A. May be added to outline different specifications.  (??)
