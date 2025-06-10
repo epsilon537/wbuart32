@@ -80,10 +80,10 @@ with this program.  If not, see \texttt{http://www.gnu.org/licenses/} for a copy
 \listoftables
 \begin{preface}
 It may be that building a UART is a mandatory coming of age task for any HDL
-designer.  The task is simple, easy, and there's not all that much to it. 
+designer.  The task is simple, easy, and there's not all that much to it.
 This project comes out of some of my first experiences with Verilog.
 
-Since then, it has been augmented with quite a few useful capabilities for 
+Since then, it has been augmented with quite a few useful capabilities for
 simulating a UART connection when using Verilator.  It is this, perhaps
 unusual, addition to the core set that makes this core worth taking note of.
 
@@ -116,7 +116,7 @@ UART implementation offers something many of these other examples do not: a
 Verilator simulation capability.  This will allow the user to connect, via
 a TCP/IP port or a telnet application, to the UART of their desired chip.  As
 a result, full two-way interaction can be had between a simulation and a
-terminal or other port.  Indeed, this may even be sufficient to connect a 
+terminal or other port.  Indeed, this may even be sufficient to connect a
 CPU, capable of running Linux, to a terminal to verify that yes it can truly
 run Linux--all within Verilator.
 
@@ -154,7 +154,7 @@ that,
 \begin{eqnarray}
 \left|\left(N+2\right)
 	\left(\frac{f_{\mbox{\tiny SYS}}}{f_{\mbox{\tiny BAUD}}}
-		-{\mbox{\tt CKS}}\right)\right| 
+		-{\mbox{\tt CKS}}\right)\right|
 	&<& \frac{f_{\mbox{\tiny SYS}}}{2f_{\mbox{\tiny BAUD}}},
 	\label{eqn:baudlimit}.
 \end{eqnarray}
@@ -176,7 +176,7 @@ When the strobe is high, the data is valid.  It will only be high for one
 clock period.  If you wish to connect this output to a bus, a register will be
 needed to hold the strobe high until the data is read, as in
 {\tt wbuart-insert.v}.  Also, while the strobe
-is high, the {\tt o\_frame\_err} will indicate whether or not there was a 
+is high, the {\tt o\_frame\_err} will indicate whether or not there was a
 framing error (i.e., no stop bit), and {\tt o\_parity\_err} will indicate
 whether or not the parity matched.  Finally, the {\tt o\_break} line will
 indicate whether the receiver is in a ``break'' state,
@@ -205,7 +205,7 @@ receive register and transmit register as before, as well as a FIFO health
 register through which the size and fill of the FIFO can be queried.
 
 The C++ simulation portion of the code revolves around the file
-{\tt bench/cpp/uartsim.cpp} and its associated header.  This file defines a 
+{\tt bench/cpp/uartsim.cpp} and its associated header.  This file defines a
 class, {\tt UARTSIM}, which can be used to connect the UART to a TCP/IP stream.
 When initialized, this class takes, as input, the TCP/IP port number that the
 class is to connect with.  Setting the port to zero connects the UART to
@@ -220,9 +220,9 @@ and over again.  This example
 uses only the {\tt txuart.v} module, and can be simulated in Verilator.
 A second test file, {\tt echotest.v}, works by echoing every received character
 to the transmit port.
-This tests both {\tt txuart.v} and {\tt rxuart.v}. 
+This tests both {\tt txuart.v} and {\tt rxuart.v}.
 A third test file, {\tt linetest.v}, works by waiting for a line of data to be
-received, after which it parrots that line back to the terminal. 
+received, after which it parrots that line back to the terminal.
 A fourth test file, {\tt speechfifo.v} tests both the wishbone interface as
 well as the FIFO, by filling the UART, 10~samples at a time, with text from
 Abraham Lincoln's Gettysburg address.
@@ -240,7 +240,7 @@ To use the core, a couple of steps are required.  First, wire it up.  This
 includes wiring the {\tt i\_uart} and {\tt o\_uart} ports, as well as any
 {\tt i\_cts\_n} and/or {\tt o\_rts\_n} hardware flow control.  The
 {\tt rxuart.v} and {\tt txuart.v} files may be wired up for use individually,
-or as part of a large module such as the example in{\tt wbuart-insert.v}. 
+or as part of a large module such as the example in{\tt wbuart-insert.v}.
 Alternatively, the {\tt wbuart.v} file may be connected to a straight 32--bit
 wishbone bus.
 Second, set the UART configuration register.  This is ideally set by setting
@@ -342,7 +342,7 @@ is shown in Fig.\ref{fig:SETUP}.
 It is designed so that, for any 8N1 protocol (eight data bits, no parity, one
 stop bit, hardware flow control on), all of the upper bits will be set to zero
 so that only the number of
-clocks per baud interval needs to be set. 
+clocks per baud interval needs to be set.
 The top bit is unused, making this a 31--bit number.
 The other fields are: $H$ which, when set, turns off any hardware flow
 control.  $N$ sets the number of bits per word.  A value of zero
@@ -350,7 +350,7 @@ corresponds to 8--bit words, a value of one to seven bit words, and so forth up
 to a value of three for five bit words.  $S$ determines the number of stop
 bits.  Set this to one for two stop bits, or leave it at zero for a single
 stop bit.  $P$ determines whether or not a parity bit is used (1~for parity,
-0~for no parity), while $F$ determines whether or not the parity is fixed. 
+0~for no parity), while $F$ determines whether or not the parity is fixed.
 Tbl.~\ref{tbl:parity} lists how $P$, $F$, and $T$ affect which parity
 is being used.
 \begin{table}\begin{center}
@@ -411,7 +411,7 @@ in the lower 1-bits, as shown in Fig.~\ref{fig:FIFO}.
 \bitbox[rlb]{1}{H}
 \bitbox[rlb]{1}{Z} \\
 \end{bytefield}
-\caption{RXDATA Register fields}\label{fig:FIFO}
+\caption{FIFO Register fields}\label{fig:FIFO}
 \end{center}\end{figure}
 We'll discuss each of these bits individually.
 
@@ -501,12 +501,12 @@ data line is high or low, the $O$ field indicates the same for the transmit
 line.  These aren't particularly useful or valuable, but the $C$ bit doesn't
 fit in the receive data register since it would violate the error condition
 detector.  These two bits are thrown in here for whatever useful purpose one
-might find.  The $B$ field, when set, transmits a break condition. 
+might find.  The $B$ field, when set, transmits a break condition.
 Further, writes to the TXDATA register while in a break condition and with the
 $B$ field clear, will clear the transmitter from any break condition without
 transmitting anything.  The $S$ field is similar to the RXDATA strobe register.
 It is a read--only bit that will be true any time the transmitter is busy.
-It will be clear only when the transmitter is idle. 
+It will be clear only when the transmitter is idle.
 Finally, the upper $R$ bit at the top of the register is the instantaneous
 value of the received ready-to-send (RTS) value.
 
@@ -522,7 +522,7 @@ with the upper 24--bits clear to transmit.
 
 \chapter{Clocks}\label{ch:clocks}
 The UART has been tested with a clock as fast as 200~MHz
-(Tbl.~\ref{tbl:clocks}). 
+(Tbl.~\ref{tbl:clocks}).
 \begin{table}\begin{center}
 \begin{clocklist}
 {\tt i\_clk} & (System) & 200~MHz & & System clock\\\hline
@@ -571,7 +571,7 @@ Signal Names & \begin{tabular}{lll}
 \end{center}\end{table}
 is required by the wishbone specification in order to declare the core as
 wishbone compliant, and so it is included here.  It references the connections
-used in {\tt wbuart.v} as well as those exemplified by {\tt wbuart-insert.v}. 
+used in {\tt wbuart.v} as well as those exemplified by {\tt wbuart-insert.v}.
 The big thing to notice is that this core acts as a wishbone slave, and that
 all accesses to the core registers are 32--bit reads and writes to this
 interface---not the 8--bit reads or writes that might be expected from any
@@ -581,7 +581,7 @@ What this table doesn't show is that all accesses to the port take a single
 clock for {\tt wbuart-insert.v}, or two clocks for {\tt wbuart.v}.  That is, if
 the {\tt i\_wb\_stb} line is high on one clock, the {\tt i\_wb\_ack} line will
 be high the next for single clock access, or the clock after that for two
-clock access.  Further, the {\tt o\_wb\_stall} line is tied to zero. 
+clock access.  Further, the {\tt o\_wb\_stall} line is tied to zero.
 
 Also, this particular wishbone implementation assumes that if {\tt i\_wb\_stb},
 then {\tt i\_wb\_cyc} will be high as well.  Hence it only checks whether or not
@@ -604,7 +604,7 @@ Verilator, they need to be connected inside your Verilator test bench, as in:
 For those interested in hardware flow control, the core also offers an
 {\tt i\_cts\_n} input to control the flow out of our transmitter, and an
 {\tt o\_rts\_n} output to indicate when the receiver is full.  Both of these
-wires are active low. 
+wires are active low.
 
 For those not interested in flow control there are three
 possibilities.  First, one can set the module parameter
